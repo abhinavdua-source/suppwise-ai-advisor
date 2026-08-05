@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as StackRouteImport } from './routes/stack'
 import { Route as AdvisorIndexRouteImport } from './routes/advisor.index'
 import { Route as AdvisorReportRouteImport } from './routes/advisor.report'
@@ -18,6 +19,11 @@ import { Route as EvidenceIdRouteImport } from './routes/evidence.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressRoute = ProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StackRoute = StackRouteImport.update({
@@ -43,6 +49,7 @@ const EvidenceIdRoute = EvidenceIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/progress': typeof ProgressRoute
   '/stack': typeof StackRoute
   '/advisor/report': typeof AdvisorReportRoute
   '/evidence/$id': typeof EvidenceIdRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/progress': typeof ProgressRoute
   '/stack': typeof StackRoute
   '/advisor/report': typeof AdvisorReportRoute
   '/evidence/$id': typeof EvidenceIdRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/progress': typeof ProgressRoute
   '/stack': typeof StackRoute
   '/advisor/report': typeof AdvisorReportRoute
   '/evidence/$id': typeof EvidenceIdRoute
@@ -65,12 +74,25 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/stack' | '/advisor/report' | '/evidence/$id' | '/advisor/'
+  fullPaths:
+    | '/'
+    | '/progress'
+    | '/stack'
+    | '/advisor/report'
+    | '/evidence/$id'
+    | '/advisor/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/stack' | '/advisor/report' | '/evidence/$id' | '/advisor'
+  to:
+    | '/'
+    | '/progress'
+    | '/stack'
+    | '/advisor/report'
+    | '/evidence/$id'
+    | '/advisor'
   id:
     | '__root__'
     | '/'
+    | '/progress'
     | '/stack'
     | '/advisor/report'
     | '/evidence/$id'
@@ -79,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProgressRoute: typeof ProgressRoute
   StackRoute: typeof StackRoute
   AdvisorReportRoute: typeof AdvisorReportRoute
   EvidenceIdRoute: typeof EvidenceIdRoute
@@ -92,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress': {
+      id: '/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof ProgressRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stack': {
@@ -127,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProgressRoute: ProgressRoute,
   StackRoute: StackRoute,
   AdvisorReportRoute: AdvisorReportRoute,
   EvidenceIdRoute: EvidenceIdRoute,
