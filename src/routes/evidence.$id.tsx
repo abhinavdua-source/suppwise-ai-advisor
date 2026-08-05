@@ -85,7 +85,7 @@ function Evidence() {
 
         <section className="space-y-3">
           <h2 className="text-title text-on-surface">References</h2>
-          {item.references.map((ref) => (
+          {item.references.map((ref: { label: string; source: string }) => (
             <div
               key={ref.label}
               className="flex items-start gap-3 rounded-xl bg-surface-container-low p-4"

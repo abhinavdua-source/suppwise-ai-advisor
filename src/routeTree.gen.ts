@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdvisorIndexRouteImport } from './routes/advisor.index'
 import { Route as AdvisorReportRouteImport } from './routes/advisor.report'
+import { Route as EvidenceIdRouteImport } from './routes/evidence.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,34 +29,43 @@ const AdvisorReportRoute = AdvisorReportRouteImport.update({
   path: '/advisor/report',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EvidenceIdRoute = EvidenceIdRouteImport.update({
+  id: '/evidence/$id',
+  path: '/evidence/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/advisor/report': typeof AdvisorReportRoute
+  '/evidence/$id': typeof EvidenceIdRoute
   '/advisor/': typeof AdvisorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/advisor/report': typeof AdvisorReportRoute
+  '/evidence/$id': typeof EvidenceIdRoute
   '/advisor': typeof AdvisorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/advisor/report': typeof AdvisorReportRoute
+  '/evidence/$id': typeof EvidenceIdRoute
   '/advisor/': typeof AdvisorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/advisor/report' | '/advisor/'
+  fullPaths: '/' | '/advisor/report' | '/evidence/$id' | '/advisor/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/advisor/report' | '/advisor'
-  id: '__root__' | '/' | '/advisor/report' | '/advisor/'
+  to: '/' | '/advisor/report' | '/evidence/$id' | '/advisor'
+  id: '__root__' | '/' | '/advisor/report' | '/evidence/$id' | '/advisor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdvisorReportRoute: typeof AdvisorReportRoute
+  EvidenceIdRoute: typeof EvidenceIdRoute
   AdvisorIndexRoute: typeof AdvisorIndexRoute
 }
 
@@ -82,12 +92,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdvisorReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evidence/$id': {
+      id: '/evidence/$id'
+      path: '/evidence/$id'
+      fullPath: '/evidence/$id'
+      preLoaderRoute: typeof EvidenceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdvisorReportRoute: AdvisorReportRoute,
+  EvidenceIdRoute: EvidenceIdRoute,
   AdvisorIndexRoute: AdvisorIndexRoute,
 }
 export const routeTree = rootRouteImport
