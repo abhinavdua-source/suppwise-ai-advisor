@@ -10,33 +10,128 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BloodworkRouteImport } from './routes/bloodwork'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as StackRouteImport } from './routes/stack'
+import { Route as AdvisorIndexRouteImport } from './routes/advisor.index'
+import { Route as AdvisorReportRouteImport } from './routes/advisor.report'
+import { Route as EvidenceIdRouteImport } from './routes/evidence.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BloodworkRoute = BloodworkRouteImport.update({
+  id: '/bloodwork',
+  path: '/bloodwork',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgressRoute = ProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StackRoute = StackRouteImport.update({
+  id: '/stack',
+  path: '/stack',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdvisorIndexRoute = AdvisorIndexRouteImport.update({
+  id: '/advisor/',
+  path: '/advisor/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdvisorReportRoute = AdvisorReportRouteImport.update({
+  id: '/advisor/report',
+  path: '/advisor/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EvidenceIdRoute = EvidenceIdRouteImport.update({
+  id: '/evidence/$id',
+  path: '/evidence/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bloodwork': typeof BloodworkRoute
+  '/profile': typeof ProfileRoute
+  '/progress': typeof ProgressRoute
+  '/stack': typeof StackRoute
+  '/advisor/report': typeof AdvisorReportRoute
+  '/evidence/$id': typeof EvidenceIdRoute
+  '/advisor/': typeof AdvisorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bloodwork': typeof BloodworkRoute
+  '/profile': typeof ProfileRoute
+  '/progress': typeof ProgressRoute
+  '/stack': typeof StackRoute
+  '/advisor/report': typeof AdvisorReportRoute
+  '/evidence/$id': typeof EvidenceIdRoute
+  '/advisor': typeof AdvisorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/bloodwork': typeof BloodworkRoute
+  '/profile': typeof ProfileRoute
+  '/progress': typeof ProgressRoute
+  '/stack': typeof StackRoute
+  '/advisor/report': typeof AdvisorReportRoute
+  '/evidence/$id': typeof EvidenceIdRoute
+  '/advisor/': typeof AdvisorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/bloodwork'
+    | '/profile'
+    | '/progress'
+    | '/stack'
+    | '/advisor/report'
+    | '/evidence/$id'
+    | '/advisor/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/bloodwork'
+    | '/profile'
+    | '/progress'
+    | '/stack'
+    | '/advisor/report'
+    | '/evidence/$id'
+    | '/advisor'
+  id:
+    | '__root__'
+    | '/'
+    | '/bloodwork'
+    | '/profile'
+    | '/progress'
+    | '/stack'
+    | '/advisor/report'
+    | '/evidence/$id'
+    | '/advisor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BloodworkRoute: typeof BloodworkRoute
+  ProfileRoute: typeof ProfileRoute
+  ProgressRoute: typeof ProgressRoute
+  StackRoute: typeof StackRoute
+  AdvisorReportRoute: typeof AdvisorReportRoute
+  EvidenceIdRoute: typeof EvidenceIdRoute
+  AdvisorIndexRoute: typeof AdvisorIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +143,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bloodwork': {
+      id: '/bloodwork'
+      path: '/bloodwork'
+      fullPath: '/bloodwork'
+      preLoaderRoute: typeof BloodworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/progress': {
+      id: '/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stack': {
+      id: '/stack'
+      path: '/stack'
+      fullPath: '/stack'
+      preLoaderRoute: typeof StackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/advisor/': {
+      id: '/advisor/'
+      path: '/advisor'
+      fullPath: '/advisor/'
+      preLoaderRoute: typeof AdvisorIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/advisor/report': {
+      id: '/advisor/report'
+      path: '/advisor/report'
+      fullPath: '/advisor/report'
+      preLoaderRoute: typeof AdvisorReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evidence/$id': {
+      id: '/evidence/$id'
+      path: '/evidence/$id'
+      fullPath: '/evidence/$id'
+      preLoaderRoute: typeof EvidenceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BloodworkRoute: BloodworkRoute,
+  ProfileRoute: ProfileRoute,
+  ProgressRoute: ProgressRoute,
+  StackRoute: StackRoute,
+  AdvisorReportRoute: AdvisorReportRoute,
+  EvidenceIdRoute: EvidenceIdRoute,
+  AdvisorIndexRoute: AdvisorIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
