@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
 import { Icon } from "@/components/Icon";
-import { DRIVERS, PROTOCOL } from "@/data/wisement";
+import { BEHAVIOURS, DRIVERS, NUTRITION, PROTOCOL } from "@/data/wisement";
 import { addToStack, useStack } from "@/lib/stack-store";
 
 export const Route = createFileRoute("/advisor/report")({
@@ -11,7 +11,7 @@ export const Route = createFileRoute("/advisor/report")({
       {
         name: "description",
         content:
-          "A structured report of possible causes, lifestyle changes, nutrition and supplement protocol for afternoon fatigue.",
+          "A structured report of possible causes, lifestyle changes, nutrition and a supplement protocol for afternoon fatigue.",
       },
       { property: "og:title", content: "Cognitive Fatigue Analysis — WiseMent" },
       {
@@ -23,45 +23,28 @@ export const Route = createFileRoute("/advisor/report")({
   component: Report,
 });
 
-const LIFESTYLE = [
-  {
-    icon: "wb_sunny",
-    title: "Morning light exposure",
-    body: "10 minutes of outdoor light within 30 mins of waking to anchor cortisol rhythm.",
-  },
-  {
-    icon: "local_cafe",
-    title: "Delay caffeine 90 minutes",
-    body: "Lets adenosine clear naturally and blunts the 3pm crash.",
-  },
-  {
-    icon: "directions_walk",
-    title: "Post-lunch 10 min walk",
-    body: "Improves glucose disposal and reduces the post-prandial dip.",
-  },
-];
-
-const NUTRITION = [
-  { icon: "egg", title: "Protein-forward lunch", body: "40g protein, lower refined carbs." },
-  { icon: "set_meal", title: "Oily fish 2x weekly", body: "Omega-3 for membrane fluidity." },
-  { icon: "nutrition", title: "Iron + vitamin C pairing", body: "Improves non-heme absorption." },
-];
+const TONE_BG: Record<string, string> = {
+  error: "bg-error-container text-on-error-container",
+  secondary: "bg-secondary-fixed text-on-secondary-fixed",
+  outline: "bg-surface-variant text-on-surface",
+};
 
 function Report() {
   const stack = useStack();
 
   return (
-    <AppShell title="Analysis" back="/advisor">
+    <AppShell title="Analysis" back={{ to: "/advisor", label: "Back to advisor" }}>
       <div className="flex w-full flex-col gap-10 px-5 py-4 fade-up">
         <header className="space-y-3">
-          <span className="caps rounded-full bg-primary-fixed px-2 py-1 text-primary">
+          <span className="caps inline-block rounded-full bg-primary-fixed px-2 py-1 text-primary">
             [ 92% CONFIDENCE ]
           </span>
           <h1 className="text-headline tracking-tight text-on-background">
             Cognitive Fatigue Analysis
           </h1>
           <p className="text-body text-on-surface-variant">
-            Based on your answers, sleep logs and last blood panel. Not a medical diagnosis.
+            Built from your answers, sleep logs and last blood panel. Informational, not a
+            diagnosis.
           </p>
         </header>
 
@@ -69,20 +52,29 @@ function Report() {
           <h2 className="text-title text-on-surface">Possible Causes</h2>
           {DRIVERS.map((driver) => (
             <div key={driver.title} className="rounded-xl bg-surface-container p-4 shadow-sm">
-              <div className="mb-2 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <Icon name={driver.icon} className="text-on-surface-variant" />
-                  <h3 className="text-body font-medium text-on-surface">{driver.title}</h3>
+              <div className="mb-3 flex items-center gap-3">
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${
+                    TONE_BG[driver.tone] ?? TONE_BG["outline"]
+                  }`}
+                >
+                  <Icon name={driver.icon} className="text-[20px]" />
                 </div>
-                <span className="caps text-on-surface-variant">{driver.weight}%</span>
+                <div className="flex-1">
+                  <h3 className="text-body font-medium text-on-surface">{driver.title}</h3>
+                  <p className="caps mt-0.5 text-on-surface-variant">{driver.subtitle}</p>
+                </div>
+                <span className="caps text-on-surface-variant">{driver.level}</span>
               </div>
-              <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-surface-variant">
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-variant">
                 <div
                   className="h-full rounded-full bg-primary"
-                  style={{ width: `${driver.weight}%` }}
+                  style={{ width: `${driver.confidence}%` }}
                 />
               </div>
-              <p className="text-body text-on-surface-variant">{driver.detail}</p>
+              <p className="caps mt-2 text-on-surface-variant">
+                {driver.confidence}% contribution
+              </p>
             </div>
           ))}
         </section>
@@ -90,10 +82,10 @@ function Report() {
         <section className="space-y-3">
           <h2 className="text-title text-on-surface">Lifestyle Recommendations</h2>
           <div className="flex flex-col gap-3">
-            {LIFESTYLE.map((item) => (
+            {BEHAVIOURS.map((item, i) => (
               <div key={item.title} className="flex gap-3 rounded-xl bg-surface-container-low p-4">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-tertiary-fixed text-on-tertiary-fixed">
-                  <Icon name={item.icon} className="text-[18px]" />
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tertiary-fixed font-mono text-[12px] text-on-tertiary-fixed">
+                  {i + 1}
                 </div>
                 <div>
                   <h3 className="text-body font-medium text-on-surface">{item.title}</h3>
@@ -106,27 +98,41 @@ function Report() {
 
         <section className="space-y-3">
           <h2 className="text-title text-on-surface">Nutrition Suggestions</h2>
-          <div className="grid grid-cols-1 gap-3">
-            {NUTRITION.map((item) => (
-              <div
-                key={item.title}
-                className="flex items-center gap-3 rounded-xl bg-surface-container-low p-4"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary-fixed text-on-secondary-fixed">
-                  <Icon name={item.icon} className="text-[18px]" />
-                </div>
-                <div>
-                  <h3 className="text-body font-medium text-on-surface">{item.title}</h3>
-                  <p className="caps mt-0.5 text-on-surface-variant">{item.body}</p>
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl bg-surface-container-low p-4">
+              <p className="caps mb-2 flex items-center gap-1 text-primary">
+                <Icon name="add_circle" className="text-[14px]" /> Increase
+              </p>
+              <ul className="space-y-1">
+                {NUTRITION.increase.map((n) => (
+                  <li key={n} className="text-body text-on-surface">
+                    {n}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-xl bg-surface-container-low p-4">
+              <p className="caps mb-2 flex items-center gap-1 text-on-surface-variant">
+                <Icon name="do_not_disturb_on" className="text-[14px]" /> Reduce
+              </p>
+              <ul className="space-y-1">
+                {NUTRITION.reduce.map((n) => (
+                  <li key={n} className="text-body text-on-surface">
+                    {n}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="col-span-2 rounded-xl bg-surface-container-high p-4">
+              <p className="caps mb-1 text-on-surface-variant">Daily macro target</p>
+              <p className="font-mono text-body text-on-surface">{NUTRITION.macros}</p>
+            </div>
           </div>
         </section>
 
         <section className="space-y-3">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-title text-on-surface">Supplement Protocol</h2>
+            <h2 className="text-title text-on-surface">Supplement Recommendations</h2>
             <span className="caps text-on-surface-variant">{PROTOCOL.length} items</span>
           </div>
           <div className="flex flex-col gap-3">
@@ -138,21 +144,77 @@ function Report() {
                   className="rounded-xl bg-surface-container-lowest p-4 card-shadow"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-body font-medium text-on-surface">{item.name}</h3>
-                      <p className="caps mt-1 text-on-surface-variant">
-                        {item.dose} · {item.timing}
-                      </p>
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed">
+                        <Icon name={item.icon} className="text-[20px]" />
+                      </div>
+                      <div>
+                        <h3 className="text-body font-medium text-on-surface">{item.name}</h3>
+                        <p className="caps mt-1 text-on-surface-variant">
+                          {item.dose} · {item.timing}
+                        </p>
+                      </div>
                     </div>
-                    <span className="caps rounded-full bg-primary-fixed px-2 py-1 text-primary">
-                      Grade {item.evidence}
+                    <span className="caps shrink-0 rounded-full bg-primary-fixed px-2 py-1 text-primary">
+                      {item.match}% match
                     </span>
                   </div>
-                  <p className="mt-3 text-body text-on-surface-variant">{item.why}</p>
+
+                  <p className="mt-3 text-body text-on-surface-variant">{item.rationale}</p>
+
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <div className="rounded-lg bg-surface-container p-3">
+                      <p className="caps text-on-surface-variant">Expected effect</p>
+                      <p className="mt-1 text-body text-on-surface">{item.expected}</p>
+                    </div>
+                    <div className="rounded-lg bg-surface-container p-3">
+                      <p className="caps text-on-surface-variant">Evidence</p>
+                      <p className="mt-1 flex items-center gap-1 text-body text-on-surface">
+                        <Icon name="verified" className="text-[16px] text-primary" filled />
+                        {item.evidenceLabel}
+                      </p>
+                    </div>
+                  </div>
+
+                  <details className="group mt-3 rounded-lg bg-surface-container-low p-3">
+                    <summary className="caps flex cursor-pointer list-none items-center justify-between text-on-surface-variant">
+                      Safety &amp; interactions
+                      <Icon
+                        name="expand_more"
+                        className="text-[18px] transition-transform group-open:rotate-180"
+                      />
+                    </summary>
+                    <div className="mt-3 space-y-2">
+                      <p className="text-body text-on-surface-variant">
+                        <span className="text-on-surface">Side effects:</span> {item.sideEffects}
+                      </p>
+                      <p className="text-body text-on-surface-variant">
+                        <span className="text-on-surface">Interactions:</span> {item.interactions}
+                      </p>
+                      <p className="text-body text-on-surface-variant">
+                        <span className="text-on-surface">Who should avoid:</span> {item.avoid}
+                      </p>
+                    </div>
+                  </details>
+
                   <div className="mt-4 flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => addToStack(item)}
+                      onClick={() =>
+                        addToStack({
+                          id: item.id,
+                          name: item.name,
+                          icon: item.icon,
+                          category: item.category,
+                          dose: item.dose,
+                          timing: item.timing,
+                          routine: item.routine,
+                          daysLeft: 30,
+                          monthlyCost: 15,
+                          reminder: true,
+                          tone: item.tone,
+                        })
+                      }
                       disabled={added}
                       className={`flex flex-1 items-center justify-center gap-1 rounded-lg py-2.5 text-body font-medium transition-colors ${
                         added
@@ -160,10 +222,7 @@ function Report() {
                           : "bg-primary text-on-primary"
                       }`}
                     >
-                      <Icon
-                        name={added ? "check" : "add"}
-                        className="text-[18px]"
-                      />
+                      <Icon name={added ? "check" : "add"} className="text-[18px]" />
                       {added ? "In your stack" : "Add to stack"}
                     </button>
                     <Link
