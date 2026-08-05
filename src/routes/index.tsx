@@ -146,18 +146,16 @@ function Home() {
             ))}
             <Link
               to="/bloodwork"
-              className="col-span-2 flex items-center gap-3 rounded-xl bg-primary-container p-4 shadow-sm"
+              className="col-span-2 flex items-center gap-3 rounded-xl bg-primary p-4 shadow-sm"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-on-primary-container/20 text-on-primary-container">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-on-primary/15 text-on-primary">
                 <Icon name="bloodtype" />
               </div>
               <div className="flex-1">
-                <h3 className="text-body font-medium text-on-primary-container">
-                  Blood Test Review
-                </h3>
-                <p className="caps mt-1 text-on-primary-container/70">Biomarker analysis</p>
+                <h3 className="text-body font-medium text-on-primary">Blood Test Review</h3>
+                <p className="caps mt-1 text-on-primary/70">Biomarker analysis</p>
               </div>
-              <Icon name="arrow_forward" className="text-on-primary-container" />
+              <Icon name="arrow_forward" className="text-on-primary" />
             </Link>
           </div>
         </section>
