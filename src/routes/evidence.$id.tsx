@@ -12,10 +12,10 @@ export const Route = createFileRoute("/evidence/$id")({
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Evidence unavailable — WiseMent" }, { name: "robots", content: "noindex" }],
+        meta: [{ title: "Evidence unavailable — SuppWise" }, { name: "robots", content: "noindex" }],
       };
     }
-    const title = `${loaderData.item.name} — Evidence | WiseMent`;
+    const title = `${loaderData.item.name} — Evidence | SuppWise`;
     const description = `Study count, scientific consensus and plain-English explanation for ${loaderData.item.name}.`;
     return {
       meta: [
