@@ -98,6 +98,72 @@ function Home() {
         </section>
 
         <section className="mb-12 px-5">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-title text-on-surface">Today's Supplements</h2>
+            <span className="caps rounded-full bg-secondary-fixed px-2 py-1 text-on-secondary-fixed">
+              {takenCount}/{stack.length} Taken
+            </span>
+          </div>
+          <div className="flex flex-col gap-2">
+            {stack.map((supp) => {
+              const active = taken.includes(supp.id);
+              return (
+                <button
+                  key={supp.id}
+                  type="button"
+                  onClick={() =>
+                    setTaken((prev) =>
+                      prev.includes(supp.id)
+                        ? prev.filter((id) => id !== supp.id)
+                        : [...prev, supp.id],
+                    )
+                  }
+                  className={`flex w-full items-center gap-3 rounded-xl p-3 text-left shadow-sm transition-colors active:scale-[0.99] ${
+                    active ? "bg-secondary-fixed/40" : "bg-surface-container"
+                  }`}
+                >
+                  <span
+                    className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
+                      active
+                        ? "bg-primary text-on-primary"
+                        : "bg-surface-container-high text-on-surface-variant"
+                    }`}
+                  >
+                    <Icon name={supp.icon} filled={active} className="text-[20px]" />
+                  </span>
+                  <span className="flex-1">
+                    <span
+                      className={`block text-body font-medium ${
+                        active ? "text-on-surface line-through opacity-60" : "text-on-surface"
+                      }`}
+                    >
+                      {supp.name}
+                    </span>
+                    <span className="caps mt-0.5 block text-on-surface-variant">
+                      {supp.dose} · {supp.timing}
+                    </span>
+                  </span>
+                  <Icon
+                    name={active ? "check_circle" : "radio_button_unchecked"}
+                    filled={active}
+                    className={active ? "text-primary" : "text-outline-variant"}
+                  />
+                </button>
+              );
+            })}
+            {stack.length === 0 && (
+              <Link
+                to="/stack"
+                className="rounded-xl bg-surface-container p-4 text-body text-on-surface-variant"
+              >
+                No supplements yet — build your stack.
+              </Link>
+            )}
+          </div>
+        </section>
+
+
+        <section className="mb-12 px-5">
           <div className="relative w-full">
             <Icon
               name="search"
