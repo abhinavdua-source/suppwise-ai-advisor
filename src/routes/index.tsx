@@ -49,8 +49,9 @@ function Home() {
   const ask = () => {
     void navigate({
       to: "/advisor",
-      search: query.trim() ? { q: query.trim() } : undefined,
+      search: query.trim() ? { q: query.trim() } : {},
     });
+
   };
 
   return (
