@@ -80,14 +80,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
       },
-      { title: "WiseMent — Evidence-Based Supplement Advisor" },
+      { title: "SuppWise — Evidence-Based Supplement Advisor" },
       {
         name: "description",
         content:
-          "WiseMent explains why you feel the way you do, then recommends evidence-rated supplements, dosages and habits.",
+          "SuppWise explains why you feel the way you do, then recommends evidence-rated supplements, dosages and habits.",
       },
-      { name: "author", content: "WiseMent" },
-      { property: "og:title", content: "WiseMent — Evidence-Based Supplement Advisor" },
+      { name: "author", content: "SuppWise" },
+      { property: "og:title", content: "SuppWise — Evidence-Based Supplement Advisor" },
       {
         property: "og:description",
         content:

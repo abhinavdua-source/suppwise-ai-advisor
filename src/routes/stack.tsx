@@ -7,13 +7,13 @@ import type { Supplement } from "@/data/wisement";
 export const Route = createFileRoute("/stack")({
   head: () => ({
     meta: [
-      { title: "My Stack — WiseMent" },
+      { title: "My Stack — SuppWise" },
       {
         name: "description",
         content:
           "Your active supplement stack with dosage, timing, reminders, refill status and monthly cost.",
       },
-      { property: "og:title", content: "My Stack — WiseMent" },
+      { property: "og:title", content: "My Stack — SuppWise" },
       {
         property: "og:description",
         content: "Morning and evening routines, interaction checks and refill tracking.",

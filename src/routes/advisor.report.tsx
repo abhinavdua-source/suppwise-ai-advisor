@@ -7,13 +7,13 @@ import { addToStack, useStack } from "@/lib/stack-store";
 export const Route = createFileRoute("/advisor/report")({
   head: () => ({
     meta: [
-      { title: "Cognitive Fatigue Analysis — WiseMent" },
+      { title: "Cognitive Fatigue Analysis — SuppWise" },
       {
         name: "description",
         content:
           "A structured report of possible causes, lifestyle changes, nutrition and a supplement protocol for afternoon fatigue.",
       },
-      { property: "og:title", content: "Cognitive Fatigue Analysis — WiseMent" },
+      { property: "og:title", content: "Cognitive Fatigue Analysis — SuppWise" },
       {
         property: "og:description",
         content: "Root-cause drivers, dosages, timing and evidence grades in one report.",

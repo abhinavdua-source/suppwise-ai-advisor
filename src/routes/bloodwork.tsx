@@ -7,13 +7,13 @@ import { BIOMARKERS } from "@/data/wisement";
 export const Route = createFileRoute("/bloodwork")({
   head: () => ({
     meta: [
-      { title: "Blood Test Analysis — WiseMent" },
+      { title: "Blood Test Analysis — SuppWise" },
       {
         name: "description",
         content:
           "Upload a blood panel and see each biomarker explained, flagged as optimal or sub-optimal, with targeted suggestions.",
       },
-      { property: "og:title", content: "Blood Test Analysis — WiseMent" },
+      { property: "og:title", content: "Blood Test Analysis — SuppWise" },
       {
         property: "og:description",
         content: "Biomarker-by-biomarker interpretation with plain-English explanations.",
