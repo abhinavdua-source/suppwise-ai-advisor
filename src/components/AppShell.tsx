@@ -41,14 +41,14 @@ export function AppShell({
               </Link>
             ) : (
               <img
-                alt="WiseMent logo"
+                alt="SuppWise logo"
                 className="h-8 w-auto object-contain"
                 src={LOGO_SRC}
                 loading="lazy"
               />
             )}
             <span className="text-title font-semibold tracking-tight text-on-surface">
-              WiseMent
+              SuppWise
             </span>
           </div>
           <div className="flex items-center gap-4">

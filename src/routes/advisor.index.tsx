@@ -11,13 +11,13 @@ export const Route = createFileRoute("/advisor/")({
   }),
   head: () => ({
     meta: [
-      { title: "AI Advisor — WiseMent" },
+      { title: "AI Advisor — SuppWise" },
       {
         name: "description",
         content:
-          "Describe your symptoms and WiseMent AI asks diagnostic follow-ups before suggesting an evidence-based protocol.",
+          "Describe your symptoms and SuppWise AI asks diagnostic follow-ups before suggesting an evidence-based protocol.",
       },
-      { property: "og:title", content: "AI Advisor — WiseMent" },
+      { property: "og:title", content: "AI Advisor — SuppWise" },
       {
         property: "og:description",
         content: "Conversational root-cause analysis before any supplement recommendation.",
@@ -120,7 +120,7 @@ function Advisor() {
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-container">
                     <Icon name="psychology" className="text-[14px] text-on-primary-container" />
                   </div>
-                  <span className="caps text-on-surface-variant">WiseMent AI</span>
+                  <span className="caps text-on-surface-variant">SuppWise AI</span>
                   <span className="caps ml-auto rounded-full bg-primary-fixed px-2 py-0.5 text-primary">
                     [ 92% CONFIDENCE ]
                   </span>
@@ -199,7 +199,7 @@ function Advisor() {
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-container">
                       <Icon name="psychology" className="text-[14px] text-on-primary-container" />
                     </div>
-                    <span className="caps text-on-surface-variant">WiseMent AI</span>
+                    <span className="caps text-on-surface-variant">SuppWise AI</span>
                   </div>
                   <div className="max-w-[95%] space-y-4 rounded-2xl rounded-tl-sm bg-surface-container-lowest px-4 py-4 shadow-sm">
                     <p className="text-body leading-relaxed text-on-background">

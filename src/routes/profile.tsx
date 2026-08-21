@@ -7,13 +7,13 @@ import { useStack } from "@/lib/stack-store";
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
-      { title: "Profile & Premium — WiseMent" },
+      { title: "Profile & Premium — SuppWise" },
       {
         name: "description",
         content:
-          "Manage your goals, health context, reminders and unlock WiseMent Premium for deeper analysis.",
+          "Manage your goals, health context, reminders and unlock SuppWise Premium for deeper analysis.",
       },
-      { property: "og:title", content: "Profile & Premium — WiseMent" },
+      { property: "og:title", content: "Profile & Premium — SuppWise" },
       {
         property: "og:description",
         content: "Personal health context, preferences and premium AI features.",
@@ -113,7 +113,7 @@ function Profile() {
         </section>
 
         <section className="space-y-3 rounded-2xl bg-primary p-5 text-on-primary">
-          <span className="caps rounded-full bg-on-primary/15 px-2 py-1">WiseMent Premium</span>
+          <span className="caps rounded-full bg-on-primary/15 px-2 py-1">SuppWise Premium</span>
           <h2 className="text-title">Go deeper on your data</h2>
           <div className="flex flex-col gap-3 pt-1">
             {PREMIUM.map((f) => (
@@ -150,7 +150,7 @@ function Profile() {
         </section>
 
         <p className="caps pb-4 text-center text-[10px] text-on-surface-variant/60">
-          WiseMent prototype · Demo data only
+          SuppWise prototype · Demo data only
         </p>
       </div>
     </AppShell>

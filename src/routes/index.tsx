@@ -8,13 +8,13 @@ import { useStack } from "@/lib/stack-store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "WiseMent — Your Daily Vitality Overview" },
+      { title: "SuppWise — Your Daily Vitality Overview" },
       {
         name: "description",
         content:
-          "Track habits, review your supplement stack and ask WiseMent AI why you feel the way you do.",
+          "Track habits, review your supplement stack and ask SuppWise AI why you feel the way you do.",
       },
-      { property: "og:title", content: "WiseMent — Your Daily Vitality Overview" },
+      { property: "og:title", content: "SuppWise — Your Daily Vitality Overview" },
       {
         property: "og:description",
         content: "Habits, stack, energy trends and evidence-based research in one place.",
@@ -115,7 +115,7 @@ function Home() {
             <button
               type="button"
               onClick={ask}
-              aria-label="Ask WiseMent AI"
+              aria-label="Ask SuppWise AI"
               className="absolute top-1/2 right-2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg bg-primary text-on-primary shadow-md"
             >
               <Icon name="arrow_forward" className="text-[20px]" />

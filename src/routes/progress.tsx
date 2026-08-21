@@ -7,13 +7,13 @@ import { useStack } from "@/lib/stack-store";
 export const Route = createFileRoute("/progress")({
   head: () => ({
     meta: [
-      { title: "Progress — WiseMent" },
+      { title: "Progress — SuppWise" },
       {
         name: "description",
         content:
           "Track energy, sleep and focus over time, log how you feel and see adherence for your supplement stack.",
       },
-      { property: "og:title", content: "Progress — WiseMent" },
+      { property: "og:title", content: "Progress — SuppWise" },
       {
         property: "og:description",
         content: "Weekly trends, adherence rate and correlations between your stack and how you feel.",
