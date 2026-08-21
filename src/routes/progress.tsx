@@ -31,11 +31,28 @@ const SERIES: Record<string, number[]> = {
 
 const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
+const HEALTH_METRICS = [
+  { label: "Steps", value: "8,412", icon: "directions_walk" },
+  { label: "Resting HR", value: "54 bpm", icon: "favorite" },
+  { label: "HRV", value: "68 ms", icon: "monitor_heart" },
+  { label: "Sleep", value: "7h 24m", icon: "bedtime" },
+];
+
 function Progress() {
   const [metric, setMetric] = useState<keyof typeof SERIES>("Energy");
   const [mood, setMood] = useState(4);
   const [logged, setLogged] = useState(false);
+  const [health, setHealth] = useState<"off" | "syncing" | "on">("off");
   const stack = useStack();
+
+  const connectHealth = () => {
+    if (health !== "off") {
+      setHealth("off");
+      return;
+    }
+    setHealth("syncing");
+    setTimeout(() => setHealth("on"), 1400);
+  };
 
   const data = SERIES[metric] ?? [];
   const points = data
@@ -50,6 +67,61 @@ function Progress() {
           <h1 className="text-headline tracking-tight text-on-background">Progress</h1>
           <p className="text-body text-on-surface-variant">Last 7 days of subjective tracking.</p>
         </header>
+
+        <section className="rounded-xl bg-surface-container-lowest p-4 card-shadow">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex h-11 w-11 items-center justify-center rounded-full ${
+                health === "on" ? "bg-primary text-on-primary" : "bg-error-container text-on-error-container"
+              }`}
+            >
+              <Icon name="watch" filled={health === "on"} />
+            </div>
+            <div className="flex-1">
+              <p className="text-body font-medium text-on-surface">Apple Health & Apple Watch</p>
+              <p className="caps mt-0.5 text-on-surface-variant">
+                {health === "on"
+                  ? "Synced just now · Steps, HR, HRV, Sleep"
+                  : health === "syncing"
+                    ? "Requesting permissions…"
+                    : "Import objective data automatically"}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={connectHealth}
+              disabled={health === "syncing"}
+              className={`caps rounded-full px-3 py-2 transition-colors ${
+                health === "on"
+                  ? "bg-surface-container text-on-surface-variant"
+                  : "bg-primary text-on-primary"
+              }`}
+            >
+              {health === "on" ? "Disconnect" : health === "syncing" ? "Syncing…" : "Connect"}
+            </button>
+          </div>
+
+          {health === "on" && (
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              {HEALTH_METRICS.map((m) => (
+                <div
+                  key={m.label}
+                  className="flex items-center gap-3 rounded-xl bg-surface-container p-3"
+                >
+                  <Icon name={m.icon} className="text-[20px] text-primary" />
+                  <div>
+                    <p className="font-mono text-body text-on-surface">{m.value}</p>
+                    <p className="caps text-[10px] text-on-surface-variant">{m.label}</p>
+                  </div>
+                </div>
+              ))}
+              <p className="caps col-span-2 text-on-surface-variant">
+                SuppWise blends these with your logs to score supplement impact.
+              </p>
+            </div>
+          )}
+        </section>
+
 
         <section className="rounded-xl bg-surface-container-lowest p-4 card-shadow">
           <div className="mb-4 flex gap-2">
