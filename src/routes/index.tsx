@@ -44,6 +44,9 @@ function Home() {
   const [done, setDone] = useState<string[]>(HABITS.map((h) => h.id));
   const [query, setQuery] = useState("");
   const stack = useStack();
+  const [taken, setTaken] = useState<string[]>([]);
+  const takenCount = stack.filter((s) => taken.includes(s.id)).length;
+
   const navigate = useNavigate();
 
   const ask = () => {
