@@ -2,8 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { Icon } from "./Icon";
 
-const LOGO_SRC =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuBk_K0ULAuZrqPAqT31yvzyvrsWKk7hT2lb2CZ7gb19H3ULzqcZ4qawW6W5VWYOG1DL7e0pnN3nrbAhLWjXWpdjLzdQCDu1gM_ednvlUDyMnvWuk5QUd-eEULjrQkOI3SXLefxDJAmjvh1gKIgVKoXragTkjSeLALiDGOKl6DNDRShv2g_XOW5Wim1yQYYcxfcObEdi7IkWmp40vWjpo9zivMVtfz3lnSLP22Q3fQThg5feNF_YG12z";
+import logoSrc from "@/assets/suppwise-logo.png";
 
 const TABS = [
   { to: "/", label: "Home", icon: "home" },
@@ -39,17 +38,12 @@ export function AppShell({
               >
                 <Icon name="arrow_back" />
               </Link>
-            ) : (
-              <img
-                alt="SuppWise logo"
-                className="h-8 w-auto object-contain"
-                src={LOGO_SRC}
-                loading="lazy"
-              />
-            )}
-            <span className="text-title font-semibold tracking-tight text-on-surface">
-              SuppWise
-            </span>
+            ) : null}
+            <img
+              alt="SuppWise — track. supplement. improve."
+              className="h-7 w-auto object-contain"
+              src={logoSrc}
+            />
           </div>
           <div className="flex items-center gap-4">
             <span className="caps text-outline">{title}</span>
