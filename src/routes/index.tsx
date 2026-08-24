@@ -61,7 +61,7 @@ function Home() {
     <AppShell title="Home">
       <div className="flex w-full flex-col fade-up">
         <section className="mb-12 px-5 pt-2">
-          <h1 className="mb-2 text-headline tracking-tight text-on-background">Good morning, Alex.</h1>
+          <h1 className="mb-2 text-headline tracking-tight text-on-background">Good morning, Abhinav.</h1>
           <p className="text-body text-on-surface-variant">Here is your daily vitality overview.</p>
         </section>
 
