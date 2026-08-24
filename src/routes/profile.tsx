@@ -43,7 +43,7 @@ function Profile() {
             <Icon name="person" className="text-[32px]" filled />
           </div>
           <div>
-            <h1 className="text-title text-on-background">Alex Mercer</h1>
+            <h1 className="text-title text-on-background">Abhinav Dua</h1>
             <p className="caps mt-1 text-on-surface-variant">
               32 · Male · {stack.length} supplements
             </p>
