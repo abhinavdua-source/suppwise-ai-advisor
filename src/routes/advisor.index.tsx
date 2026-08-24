@@ -1,7 +1,11 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Icon } from "@/components/Icon";
+import { getAnalysis, getFollowUps } from "@/lib/advisor.functions";
+import type { Analysis, FollowUps } from "@/lib/advisor.server";
+import { addToStack, isInStack } from "@/lib/stack-store";
 
 type SearchParams = { q?: string | undefined };
 
@@ -34,30 +38,52 @@ const SUGGESTIONS = [
   "I'm sleeping badly",
 ];
 
-const QUESTIONS = [
-  "Do you sleep less than 7 hours on average?",
-  "Do you consume caffeine within 90 mins of waking?",
-  "Have you had a comprehensive metabolic panel recently?",
-];
+type Phase = "empty" | "thinking" | "questions" | "analyzing" | "ready";
 
-type Phase = "empty" | "questions" | "analyzing" | "ready";
+function slug(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
 
 function Advisor() {
   const { q } = Route.useSearch();
   const navigate = useNavigate();
+  const followUpsFn = useServerFn(getFollowUps);
+  const analysisFn = useServerFn(getAnalysis);
+
   const [phase, setPhase] = useState<Phase>("empty");
   const [prompt, setPrompt] = useState("");
   const [draft, setDraft] = useState("");
-  const [checked, setChecked] = useState<string[]>([]);
+  const [followUps, setFollowUps] = useState<FollowUps | null>(null);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [, forceRender] = useState(0);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const started = useRef(false);
 
   const send = (text: string) => {
-    if (!text.trim()) return;
-    setPrompt(text.trim());
+    const concern = text.trim();
+    if (!concern) return;
+    setPrompt(concern);
     setDraft("");
-    setChecked([]);
-    setPhase("questions");
+    setFollowUps(null);
+    setAnalysis(null);
+    setAnswers([]);
+    setError(null);
+    setPhase("thinking");
+    void followUpsFn({ data: { concern } })
+      .then((res) => {
+        setFollowUps(res);
+        setAnswers(res.questions.map(() => "no"));
+        setPhase("questions");
+      })
+      .catch((e: unknown) => {
+        setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+        setPhase("empty");
+      });
   };
 
   useEffect(() => {
@@ -65,23 +91,43 @@ function Advisor() {
       started.current = true;
       send(q);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    if (phase === "empty") inputRef.current?.focus();
   }, [phase]);
 
   const analyze = () => {
+    if (!followUps) return;
+    setError(null);
     setPhase("analyzing");
-    window.setTimeout(() => setPhase("ready"), 1600);
+    void analysisFn({
+      data: {
+        concern: prompt,
+        intro: followUps.intro,
+        answers: followUps.questions.map((question, i) => ({
+          question,
+          answer: answers[i] === "yes" ? "yes" : "no",
+        })),
+      },
+    })
+      .then((res) => {
+        setAnalysis(res);
+        setPhase("ready");
+      })
+      .catch((e: unknown) => {
+        setError(e instanceof Error ? e.message : "Analysis failed. Please try again.");
+        setPhase("questions");
+      });
   };
 
   return (
     <AppShell title="AI Advisor">
       <div className="relative flex w-full flex-col">
         <div className="flex flex-1 flex-col gap-6 px-5 py-6 pb-56">
-          {phase === "empty" ? (
-            <div className="flex flex-col items-center justify-center gap-6 py-12 fade-up">
+          {phase === "empty" && !prompt ? (
+            <div className="fade-up flex flex-col items-center justify-center gap-6 py-12">
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-fixed shadow-sm">
                 <Icon name="psychology" className="text-[32px] text-on-primary-fixed" />
               </div>
@@ -93,6 +139,7 @@ function Advisor() {
                   I can analyze your symptoms and suggest scientific protocols.
                 </p>
               </div>
+              {error && <p className="text-body text-error">{error}</p>}
               <div className="mt-8 flex w-full flex-col gap-3">
                 {SUGGESTIONS.map((s) => (
                   <button
@@ -115,104 +162,201 @@ function Advisor() {
                 </div>
               </div>
 
-              <div className="flex w-full flex-col gap-3 fade-up">
-                <div className="flex items-center gap-2 px-1">
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-container">
-                    <Icon name="psychology" className="text-[14px] text-on-primary-container" />
+              {phase === "thinking" && (
+                <div className="flex items-center gap-2 px-1 opacity-70">
+                  <div className="flex h-6 w-6 animate-pulse items-center justify-center rounded-full bg-surface-container-high">
+                    <Icon name="psychology" className="text-[14px] text-on-surface-variant" />
                   </div>
-                  <span className="caps text-on-surface-variant">SuppWise AI</span>
-                  <span className="caps ml-auto rounded-full bg-primary-fixed px-2 py-0.5 text-primary">
-                    [ 92% CONFIDENCE ]
-                  </span>
-                </div>
-                <div className="max-w-[95%] space-y-4 rounded-2xl rounded-tl-sm bg-surface-container-lowest px-4 py-4 text-on-background shadow-sm">
-                  <p className="text-body leading-relaxed">
-                    Afternoon fatigue, often called the &ldquo;post-prandial dip,&rdquo; is common
-                    but usually indicates sub-optimal metabolic or circadian alignment. To narrow
-                    down the root cause, I need a bit more context.
-                  </p>
-                  <div className="space-y-3 rounded-xl bg-surface-container-low p-4">
-                    <p className="caps text-on-surface-variant">Diagnostic Questions</p>
-                    <div className="space-y-2">
-                      {QUESTIONS.map((question) => (
-                        <label
-                          key={question}
-                          className="flex cursor-pointer items-start gap-3 rounded-lg p-2 transition-colors hover:bg-surface"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={checked.includes(question)}
-                            onChange={() =>
-                              setChecked((prev) =>
-                                prev.includes(question)
-                                  ? prev.filter((c) => c !== question)
-                                  : [...prev, question],
-                              )
-                            }
-                            className="mt-1 h-4 w-4 rounded accent-[var(--primary)]"
-                          />
-                          <span className="text-body text-on-surface">{question}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {[
-                      { icon: "menu_book", label: "Circadian Rhythm" },
-                      { icon: "science", label: "Adenosine Clearance" },
-                    ].map((chip) => (
-                      <span
-                        key={chip.label}
-                        className="caps inline-flex items-center gap-1 rounded-md bg-surface px-2 py-1 text-[10px] text-on-surface shadow-sm"
-                      >
-                        <Icon name={chip.icon} className="text-[12px]" />
-                        {chip.label}
-                      </span>
-                    ))}
-                  </div>
-                  {phase === "questions" && (
-                    <button
-                      type="button"
-                      onClick={analyze}
-                      className="w-full rounded-lg bg-primary py-2.5 text-body font-medium text-on-primary"
-                    >
-                      Generate my analysis
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {phase === "analyzing" && (
-                <div className="flex w-full flex-col gap-3 opacity-70">
-                  <div className="flex items-center gap-2 px-1">
-                    <div className="flex h-6 w-6 animate-pulse items-center justify-center rounded-full bg-surface-container-high">
-                      <Icon name="psychology" className="text-[14px] text-on-surface-variant" />
-                    </div>
-                    <span className="caps text-on-surface-variant">Analyzing input...</span>
-                  </div>
+                  <span className="caps text-on-surface-variant">Thinking about your case...</span>
                 </div>
               )}
 
-              {phase === "ready" && (
-                <div className="flex w-full flex-col gap-3 fade-up">
+              {followUps && (
+                <div className="fade-up flex w-full flex-col gap-3">
                   <div className="flex items-center gap-2 px-1">
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-container">
                       <Icon name="psychology" className="text-[14px] text-on-primary-container" />
                     </div>
                     <span className="caps text-on-surface-variant">SuppWise AI</span>
                   </div>
-                  <div className="max-w-[95%] space-y-4 rounded-2xl rounded-tl-sm bg-surface-container-lowest px-4 py-4 shadow-sm">
-                    <p className="text-body leading-relaxed text-on-background">
-                      I&rsquo;ve cross-referenced your answers with your sleep logs and last blood
-                      panel. Three drivers explain most of your fatigue.
-                    </p>
-                    <Link
-                      to="/advisor/report"
-                      className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-body font-medium text-on-primary"
-                    >
-                      View full analysis
-                      <Icon name="arrow_forward" className="text-[18px]" />
-                    </Link>
+                  <div className="max-w-[95%] space-y-4 rounded-2xl rounded-tl-sm bg-surface-container-lowest px-4 py-4 text-on-background shadow-sm">
+                    <p className="text-body leading-relaxed">{followUps.intro}</p>
+                    <div className="space-y-3 rounded-xl bg-surface-container-low p-4">
+                      <p className="caps text-on-surface-variant">Diagnostic Questions</p>
+                      <div className="space-y-2">
+                        {followUps.questions.map((question, i) => (
+                          <label
+                            key={question}
+                            className="flex cursor-pointer items-start gap-3 rounded-lg p-2 transition-colors hover:bg-surface"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={answers[i] === "yes"}
+                              onChange={() =>
+                                setAnswers((prev) =>
+                                  prev.map((a, idx) =>
+                                    idx === i ? (a === "yes" ? "no" : "yes") : a,
+                                  ),
+                                )
+                              }
+                              className="mt-1 h-4 w-4 rounded accent-[var(--primary)]"
+                            />
+                            <span className="text-body text-on-surface">{question}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {followUps.topics.map((topic) => (
+                        <span
+                          key={topic}
+                          className="caps inline-flex items-center gap-1 rounded-md bg-surface px-2 py-1 text-[10px] text-on-surface shadow-sm"
+                        >
+                          <Icon name="science" className="text-[12px]" />
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
+                    {phase === "questions" && (
+                      <button
+                        type="button"
+                        onClick={analyze}
+                        className="w-full rounded-lg bg-primary py-2.5 text-body font-medium text-on-primary"
+                      >
+                        Generate my analysis
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {error && <p className="px-1 text-body text-error">{error}</p>}
+
+              {phase === "analyzing" && (
+                <div className="flex items-center gap-2 px-1 opacity-70">
+                  <div className="flex h-6 w-6 animate-pulse items-center justify-center rounded-full bg-surface-container-high">
+                    <Icon name="psychology" className="text-[14px] text-on-surface-variant" />
+                  </div>
+                  <span className="caps text-on-surface-variant">
+                    Cross-referencing your answers...
+                  </span>
+                </div>
+              )}
+
+              {analysis && phase === "ready" && (
+                <div className="fade-up flex w-full flex-col gap-3">
+                  <div className="flex items-center gap-2 px-1">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-container">
+                      <Icon name="psychology" className="text-[14px] text-on-primary-container" />
+                    </div>
+                    <span className="caps text-on-surface-variant">SuppWise AI</span>
+                  </div>
+                  <div className="space-y-5 rounded-2xl rounded-tl-sm bg-surface-container-lowest px-4 py-4 shadow-sm">
+                    <div className="space-y-1">
+                      <h2 className="text-title text-on-background">{analysis.title}</h2>
+                      <p className="text-body leading-relaxed text-on-surface-variant">
+                        {analysis.summary}
+                      </p>
+                    </div>
+
+                    {analysis.drivers.length > 0 && (
+                      <section className="space-y-2">
+                        <p className="caps text-on-surface-variant">Possible Causes</p>
+                        {analysis.drivers.map((d) => (
+                          <div key={d.name} className="space-y-1 rounded-xl bg-surface-container-low p-3">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-body font-medium text-on-background">
+                                {d.name}
+                              </span>
+                              <span className="caps rounded-full bg-primary-fixed px-2 py-0.5 text-[10px] text-primary">
+                                {Math.round(d.confidence)}%
+                              </span>
+                            </div>
+                            <p className="text-body text-on-surface-variant">{d.detail}</p>
+                          </div>
+                        ))}
+                      </section>
+                    )}
+
+                    {(
+                      [
+                        ["Lifestyle Recommendations", analysis.lifestyle],
+                        ["Nutrition Suggestions", analysis.nutrition],
+                      ] as const
+                    ).map(([heading, items]) =>
+                      items.length ? (
+                        <section key={heading} className="space-y-2">
+                          <p className="caps text-on-surface-variant">{heading}</p>
+                          {items.map((item) => (
+                            <div
+                              key={item.title}
+                              className="rounded-xl bg-surface-container-low p-3"
+                            >
+                              <p className="text-body font-medium text-on-background">
+                                {item.title}
+                              </p>
+                              <p className="text-body text-on-surface-variant">{item.detail}</p>
+                            </div>
+                          ))}
+                        </section>
+                      ) : null,
+                    )}
+
+                    {analysis.supplements.length > 0 && (
+                      <section className="space-y-2">
+                        <p className="caps text-on-surface-variant">Supplement Recommendations</p>
+                        {analysis.supplements.map((s) => {
+                          const id = slug(s.name);
+                          const added = isInStack(id);
+                          return (
+                            <div
+                              key={s.name}
+                              className="space-y-2 rounded-xl bg-surface-container-low p-3"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <p className="text-body font-medium text-on-background">
+                                    {s.name}
+                                  </p>
+                                  <p className="caps text-on-surface-variant">
+                                    {s.dose} · {s.timing}
+                                  </p>
+                                </div>
+                                <button
+                                  type="button"
+                                  disabled={added}
+                                  onClick={() => {
+                                    addToStack({
+                                      id,
+                                      name: s.name,
+                                      icon: "medication",
+                                      category: "AI Recommended",
+                                      dose: s.dose,
+                                      timing: s.timing,
+                                      routine: /even|night|bed/i.test(s.timing)
+                                        ? "Evening Routine"
+                                        : "Morning Routine",
+                                      daysLeft: 30,
+                                      monthlyCost: 15,
+                                      reminder: true,
+                                      tone: "primary",
+                                    });
+                                    forceRender((n) => n + 1);
+                                  }}
+                                  className="caps shrink-0 rounded-lg bg-primary px-3 py-1.5 text-[10px] text-on-primary disabled:opacity-50"
+                                >
+                                  {added ? "In stack" : "Add"}
+                                </button>
+                              </div>
+                              <p className="text-body text-on-surface-variant">{s.why}</p>
+                              <p className="caps text-[10px] text-on-surface-variant">
+                                Evidence: {s.evidence}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </section>
+                    )}
                   </div>
                 </div>
               )}
