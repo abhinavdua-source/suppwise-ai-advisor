@@ -38,17 +38,12 @@ export function AppShell({
               >
                 <Icon name="arrow_back" />
               </Link>
-            ) : (
-              <img
-                alt="SuppWise logo"
-                className="h-8 w-auto object-contain"
-                src={LOGO_SRC}
-                loading="lazy"
-              />
-            )}
-            <span className="text-title font-semibold tracking-tight text-on-surface">
-              SuppWise
-            </span>
+            ) : null}
+            <img
+              alt="SuppWise — track. supplement. improve."
+              className="h-7 w-auto object-contain"
+              src={logoSrc}
+            />
           </div>
           <div className="flex items-center gap-4">
             <span className="caps text-outline">{title}</span>
